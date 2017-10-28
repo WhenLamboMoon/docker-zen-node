@@ -1,0 +1,19 @@
+[Unit]
+Description=Zen Daemon Container
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=10m
+Restart=always
+ExecStartPre=-/usr/bin/docker stop %i
+ExecStartPre=-/usr/bin/docker rm  %i
+# Always pull the latest docker image
+ExecStartPre=/usr/bin/docker pull whenlambomoon/zend:latest
+ExecStart=/usr/bin/docker run --rm \
+                              -p 9033:9033 \
+                              -p 18231:18231 \
+                              -v /mnt/zen:/mnt/zen \
+                              --name zend zend
+[Install]
+WantedBy=multi-user.target

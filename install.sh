@@ -63,7 +63,7 @@ EOF
 
 systemctl daemon-reload
 systemctl enable acme-sh
-systemctl start acme-sh
+systemctl restart acme-sh
 
 print_status "Waiting for acme-sh to come up..."
 sleep 30
@@ -150,10 +150,10 @@ EOF
 print_status "Enabling and starting container services..."
 systemctl daemon-reload
 systemctl enable zen-node
-systemctl start zen-node
+systemctl restart zen-node
 
 systemctl enable zen-secnodetracker
-systemctl start zen-secnodetracker
+systemctl restart zen-secnodetracker
 
 print_status "Enabling basic firewall services..."
 ufw default allow outgoing

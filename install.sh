@@ -24,9 +24,25 @@ rpcpassword=$(head -c 32 /dev/urandom | base64)
 
 print_status "Installing the ZenCash node..."
 
+echo "#########################"
 echo "fqdn: $fqdn"
 echo "email: $email"
 echo "stakeaddr: $stakeaddr"
+echo "#########################"
+
+# Create swapfile if less then 4GB memory
+totalm=$(free -m | awk '/^Mem:/{print $2}')
+if [ $totalm -lt 4000 ]; then
+  print_status "Server memory is less then 4GB..."
+  if ! grep -q '/swapfile' /etc/fstab ; then
+    print_status "Creating a 4GB swapfile..."
+    fallocate -l 4G /swapfile
+    chmod 600 /swapfile
+    mkswap /swapfile
+    swapon /swapfile
+    echo '/swapfile none swap sw 0 0' >> /etc/fstab
+  fi
+fi
 
 # Populating Cache
 print_status "Populating apt-get cache..."
@@ -174,7 +190,7 @@ systemctl start fail2ban
 print_status "Waiting for node to fetch params ..."
 until docker exec -it zen-node /usr/local/bin/gosu user zen-cli getinfo
 do
-  print_status ".."
+  echo ".."
   sleep 30
 done
 

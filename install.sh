@@ -191,7 +191,6 @@ print_status "Enabling fail2ban services..."
 systemctl enable fail2ban
 systemctl start fail2ban
 
-## Post the shield address back to our API
 print_status "Waiting for node to fetch params ..."
 until docker exec -it zen-node /usr/local/bin/gosu user zen-cli getinfo
 do
@@ -209,3 +208,5 @@ fi
 
 print_status "Install Finished"
 echo "Please wait until the blocks are up to date..."
+
+## TODO: Post the shield address back to our API

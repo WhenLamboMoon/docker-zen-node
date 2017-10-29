@@ -9,6 +9,8 @@ containers:
 - Securenodetracker https://hub.docker.com/r/whenlambomoon/secnodetracker/
 - neilpang/acme.sh https://hub.docker.com/r/neilpang/acme.sh
 
+acme.sh will run as a docker container and auto-renew your SSL certificates when required.
+
 ## Requirements
 
 You will need a VPS with at least 4GB ram (swap is OK) to run a Zencash secure node. You may use my DigitalOcean referral link to get $10 free credit https://m.do.co/c/afbafb6012b6
@@ -19,10 +21,13 @@ You will also need a domain name to point to your VPS.
 
 ## Installation
 
-Invoking the script is best done on a fresh installation, but re-running the script should not
+Invoking the script is best done on a fresh installation. Re-running the install script should not
 cause any issues.
 
-`./install.sh stakeaddr email fqdn region`
+```
+git clone https://github.com/WhenLamboMoon/docker-zen-node
+./install.sh stakeaddr email fqdn region
+```
 
 - Stakeaddr is the transparent address which has your 42 ZEN
 - Email is your notification email address should your node have issues

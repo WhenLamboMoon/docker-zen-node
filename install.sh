@@ -123,7 +123,7 @@ ExecStartPre=-/usr/bin/docker stop zen-node
 ExecStartPre=-/usr/bin/docker rm  zen-node
 # Always pull the latest docker image
 ExecStartPre=/usr/bin/docker pull whenlambomoon/zend:latest
-ExecStart=/usr/bin/docker run --rm --net=host -p 9033:9033 -p 18231:18231 -v /mnt/zen:/mnt/zen --name zen-node whenlambomoon/zend:latest
+ExecStart=/usr/bin/docker run --init --rm --net=host -p 9033:9033 -p 18231:18231 -v /mnt/zen:/mnt/zen --name zen-node whenlambomoon/zend:latest
 [Install]
 WantedBy=multi-user.target
 EOF

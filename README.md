@@ -47,6 +47,12 @@ ztSpgr2Yat7zSMiLNHtyDKGajzSesxabQsRwJnqtomDJU9wd6LzZppnQJyYiNE8sJDEy5MyTiMrSjf3b
 
 This will be the shield address you need to send 1 ZEN in order for your start accepting challenges.
 
+After you send your 1 ZEN, you may check your node private balance:
+
+```
+docker exec zen-node gosu user zen-cli z_gettotalbalance
+```
+
 *Please Note:* It may take up to 1-2 hours for your VPS to fully update to the latest block.
 
 You may check the latest block status with the following command:

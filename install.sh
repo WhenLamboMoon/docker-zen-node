@@ -200,9 +200,12 @@ do
 done
 
 if [[ $(docker exec -it zen-node /usr/local/bin/gosu user zen-cli z_listaddresses | wc -l) -eq 2 ]]; then
-  print_status "Generating shield address for node..."
+  print_status "Generating shield address for node... you will need to send 1 ZEN to this address:"
   docker exec -it zen-node /usr/local/bin/gosu user zen-cli z_getnewaddress
 else
-  print_status "Node already has shield address..."
+  print_status "Node already has shield address... you will need to send 1 ZEN to this address:"
   docker exec -it zen-node /usr/local/bin/gosu user zen-cli z_listaddresses
 fi
+
+print_status "Install Finished"
+echo "Please wait until the blocks are up to date..."

@@ -8,7 +8,7 @@ print_status() {
     echo
 }
 
-if [ $# -ne 3 ]; then
+if [ $# -ne 4 ]; then
     echo "Execution format ./install.sh stakeaddr email fqdn region (eu, na or sea)"
     exit
 fi

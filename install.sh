@@ -201,6 +201,9 @@ done
 if [[ $(docker exec -it zen-node /usr/local/bin/gosu user zen-cli z_listaddresses | wc -l) -eq 2 ]]; then
   print_status "Generating shield address for node... you will need to send 1 ZEN to this address:"
   docker exec -it zen-node /usr/local/bin/gosu user zen-cli z_getnewaddress
+
+  print_status "Restarting secnodetracker"
+  systemctl restart zen-secnodetracker
 else
   print_status "Node already has shield address... you will need to send 1 ZEN to this address:"
   docker exec -it zen-node /usr/local/bin/gosu user zen-cli z_listaddresses

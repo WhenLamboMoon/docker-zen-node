@@ -9,5 +9,8 @@ else
   exit 1
 fi
 
+# Fix ownership of the created files/folders
+chown -R node:node /home/node /mnt/zen /mnt/zcash-params
+
 cd secnodetracker
-node app.js
+gosu node node app.js

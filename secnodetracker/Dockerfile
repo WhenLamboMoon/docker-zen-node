@@ -4,7 +4,17 @@ ENV TINI_VERSION v0.16.1
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 RUN chmod +x /tini
 
-USER node
+RUN latestBaseurl="$(curl -s https://api.github.com/repos/tianon/gosu/releases | grep browser_download_url | head -n 1 | cut -d '"' -f 4 | sed 's:/[^/]*$::')" \
+&& dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" \
+&& curl -o /usr/local/bin/gosu -SL "$latestBaseurl/gosu-$dpkgArch" \
+&& curl -o /usr/local/bin/gosu.asc -SL "$latestBaseurl/gosu-$dpkgArch.asc" \
+&& export GNUPGHOME="$(mktemp -d)" \
+&& gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
+&& gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
+&& rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
+&& chmod +x /usr/local/bin/gosu \
+&& gosu nobody true \
+
 WORKDIR /home/node/
 
 RUN git clone https://github.com/ZencashOfficial/secnodetracker.git \

@@ -35,7 +35,7 @@ EXPOSE 18231
 
 # Data volumes, if you prefer mounting a host directory use "-v /path:/mnt/zen" command line
 # option (folder ownership will be changed to the same UID/GID as provided by the docker run command)
-VOLUME ["/mnt/zen", "/mnt/zcash-params"]
+VOLUME ["/mnt/zen"]
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

@@ -61,7 +61,7 @@ if [ -d "/mnt/zen/certs" ]; then
 fi
 
 # Fix ownership of the created files/folders
-chown -R user:user /home/user /mnt/zen /mnt/zcash-params
+chown -R user:user /home/user /mnt/zen
 
 /usr/local/bin/gosu user zen-fetch-params
 

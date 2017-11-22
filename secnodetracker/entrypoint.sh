@@ -13,8 +13,8 @@ fi
 cp -r /mnt/zen/zcash-params /mnt/zcash-params
 
 # Fix the permissons
-chown -R node:node /home/node/secnodetracker/config /mnt/zcash-params
-chmod g+rw /home/node/secnodetracker/config
+chown -R node:node /mnt/zen/secnode /mnt/zcash-params
+chmod g+rw /mnt/zen/secnode
 
 cd /home/node/secnodetracker
 gosu node node app.js

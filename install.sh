@@ -49,7 +49,7 @@ print_status "Populating apt-get cache..."
 apt-get update
 
 print_status "Installing packages required for setup..."
-apt-get install -y docker.io apt-transport-https lsb-release curl fail2ban unattended-upgrades > /dev/null 2>&1
+apt-get install -y docker.io apt-transport-https lsb-release curl fail2ban unattended-upgrades ufw > /dev/null 2>&1
 
 systemctl enable docker
 systemctl start docker

@@ -19,7 +19,7 @@ email=${2}
 fqdn=${3}
 region=${4}
 
-testnet=1
+testnet=0
 rpcpassword=$(head -c 32 /dev/urandom | base64)
 
 print_status "Installing the ZenCash node..."

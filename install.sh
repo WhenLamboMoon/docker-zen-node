@@ -184,7 +184,7 @@ ufw limit ssh/tcp
 ufw allow http/tcp
 ufw allow https/tcp
 ufw allow 9033/tcp
-ufw allow 19033/tcp
+#ufw allow 19033/tcp
 ufw --force enable
 
 print_status "Enabling fail2ban services..."

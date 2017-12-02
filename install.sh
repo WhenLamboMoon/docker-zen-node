@@ -71,8 +71,8 @@ Restart=always
 ExecStartPre=-/usr/bin/docker stop acme-sh
 ExecStartPre=-/usr/bin/docker rm  acme-sh
 # Always pull the latest docker image
-ExecStartPre=/usr/bin/docker pull neilpang/acme.sh
-ExecStart=/usr/bin/docker run --rm --net=host -v /mnt/zen/certs:/acme.sh --name acme-sh neilpang/acme.sh daemon
+ExecStartPre=/usr/bin/docker pull neilpang/acme.sh:fixci
+ExecStart=/usr/bin/docker run --rm --net=host -v /mnt/zen/certs:/acme.sh --name acme-sh neilpang/acme.sh:fixci daemon
 [Install]
 WantedBy=multi-user.target
 EOF

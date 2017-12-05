@@ -13,16 +13,16 @@ acme.sh will run as a docker container and auto-renew your SSL certificates when
 
 ## Requirements
 
-You will need a server with at least 4GB ram (swap is genearlly OK) to run a ZenCash secure node.
-You may use my DigitalOcean referral link to get $10 free credit https://m.do.co/c/afbafb6012b6
+You will need a server with at least 4GB ram (2GB memory w/ 2GB swap is genearlly OK) to run a ZenCash secure node. DigitalOcean and OVH have been popular providers amongst the community.
 
-The script has been tested with Ubuntu 16.04 but should work on any other Linux distribution.
+The script is designed to run on Ubuntu 16.04
 
 You will also need a domain name that is pointing to your server (eg. zennode.example.com)
+acme.sh will be used to provision and maintain a valid SSL certificate for your domain.
 
 ## Installation
 
-Invoking the script is best done on a fresh installation. Re-running the install script should not
+Invoking the script is best done on a fresh installation, however executing install script again should not
 cause any issues.
 
 ```
@@ -42,8 +42,6 @@ Example:
 
 The script will install the required dependencies and deploy the three containers on your host.
 
-acme.sh is used to provision and maintain a valid SSL certificate on your domain.
-
 The script should execute successfully when you see the output similar to this:
 
 ```
@@ -60,7 +58,7 @@ After you send your 1 ZEN, you may check your node private balance:
 docker exec zen-node gosu user zen-cli z_gettotalbalance
 ```
 
-Your securenode tracker should now report its successful status, you may check by viewing the secnodetracker logs:
+The securenodetracker will only report a successful status after you've sent your ZEN to the shield address. You may check by viewing the secnodetracker logs:
 
 ```
 docker logs zen-secnodetracker

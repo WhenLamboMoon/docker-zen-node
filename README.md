@@ -94,6 +94,16 @@ You may check the latest block status with the following command:
 docker exec zen-node gosu user zen-cli getinfo
 ```
 
+## Adding new nodes
+
+If you are creating multiple nodes, you may seed the initial blockchain from one of your running nodes with the following command:
+
+```
+rsync -avh --progress /mnt/zen/config/blocks /mnt/zen/config/chainstate /mnt/zen/config/database yournewnode:/mnt/zen/config/
+```
+
+This will save you the 1-2 hours wait for a new node to download the full chain.
+
 ## Troubleshooting
 
 If you need to execute commands with `zen-cli` you will need to append the following:

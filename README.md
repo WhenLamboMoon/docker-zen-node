@@ -122,12 +122,39 @@ docker logs zen-secnodetracker
 docker logs zen-node
 ```
 
+If your zen-node becomes corrupted due to lack of disk space you may see an error similar to this:
+
+```
+2017-12-10 21:22:46 Corruption: checksum mismatch
+2017-12-10 21:22:46 : Error opening block database.
+Please restart with -reindex to recover.
+2017-12-10 21:22:46 Aborted block database rebuild. Exiting.
+2017-12-10 21:22:46 scheduler thread interrupt
+2017-12-10 21:22:46 Shutdown: In progress...
+2017-12-10 21:22:46 StopRPC: waiting for async rpc workers to stop
+2017-12-10 21:22:46 StopNode()
+2017-12-10 21:22:46 Shutdown: done
+```
+
+To resolve this you will need to reindex your zen-node. To do this you will need to run the following commands:
+
+```
+systemctl stop zen-node
+docker run --rm --net=host -p 9033:9033 -p 18231:18231 -v /mnt/zen:/mnt/zen --name zen-node -it --entrypoint=/bin/bash whenlambomoon/zend:latest
+gosu user zend -reindex
+```
+
+Once it finishes reindexing you can exit and restart the zen-node normally:
+
+```
+docker stop zen-node
+systemctl restart zen-node
+```
+
 ## Donations
 
 Donations are appreciated:
 
-**BTC** 1FN8PRaY3CTNVZy2Fbix9fHK2ASwJ4zeys
-
-**ETH** 0x4f78813f23f443deb75a5267bed8c282b74f571b
+**ETH** 0xb08c615eb6e0269dc27ece4a581f87d2f5b7188d
 
 **ZEN** znoYaPU2G7MzUA69cMSYzmqMG4rkw3Mx7ae

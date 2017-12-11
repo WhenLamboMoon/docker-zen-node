@@ -37,6 +37,9 @@ EXPOSE 18231
 # option (folder ownership will be changed to the same UID/GID as provided by the docker run command)
 VOLUME ["/mnt/zen"]
 
+## Alternate entrypoint, in case you need to reindex
+COPY reindex.sh /usr/local/bin/reindex.sh
+
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 

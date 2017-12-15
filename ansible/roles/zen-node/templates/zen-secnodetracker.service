@@ -1,0 +1,15 @@
+[Unit]
+Description=Zen Secnodetracker Container
+After=docker.service
+Requires=docker.service
+[Service]
+TimeoutStartSec=10m
+Restart=always
+ExecStartPre=-/usr/bin/docker stop zen-secnodetracker
+ExecStartPre=-/usr/bin/docker rm  zen-secnodetracker
+# Always pull the latest docker image
+ExecStartPre=/usr/bin/docker pull whenlambomoon/secnodetracker:latest
+#ExecStart=/usr/bin/docker run --init --rm --net=host -v /mnt/zen:/mnt/zen --name zen-secnodetracker whenlambomoon/secnodetracker:latest
+ExecStart=/usr/bin/docker run --rm --net=host -v /mnt/zen:/mnt/zen --name zen-secnodetracker whenlambomoon/secnodetracker:latest
+[Install]
+WantedBy=multi-user.target

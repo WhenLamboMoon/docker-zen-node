@@ -1,0 +1,12 @@
+{% for host in groups['zen-nodes'] %}
+
+======
+{{ host }}:
+
+Shield Address: {{ hostvars[host]['zenshield']}}
+
+Balance: {{ hostvars[host]['zenbalance']}}
+====
+
+
+{%endfor%}

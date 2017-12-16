@@ -75,15 +75,18 @@
   template: src=acme-sh.service dest=/etc/systemd/system/acme-sh.service
   register: write_acme_systemd
 
+
 - name: reload systemd for acme-sh
   command: systemctl daemon-reload
   when: write_acme_systemd.changed
+
 
 - name: Restart acme-sh
   service:
     name: acme-sh
     state: restarted
     enabled: yes
+  when: write_acme_systemd.changed
 
 
 - name: Waiting for acme-sh to come up
@@ -103,6 +106,7 @@
   register: cer_result
   failed_when: cer_result.rc == 1
 
+
 - name: Creating the secnode config...
   file:
     path: /mnt/zen/secnode
@@ -110,10 +114,27 @@
     mode: 0755
     recurse: yes
 
+
 - name: Generate random rpcpassword
-  shell: head -c 32 /dev/urandom | base64
+  shell: |
+    if [ -f /mnt/zen/secnode/rpcpassword ]; then
+      cat /mnt/zen/secnode/rpcpassword
+    else
+      head -c 32 /dev/urandom | base64
+    fi
   register: rpcpassword
 
+- name: Installing zen-node service
+  template: src=zen-node.service dest=/etc/systemd/system/zen-node.service
+  register: write_zen_node
+
+- name: Installing zen-secnodetracker service
+  template: src=zen-secnodetracker.service dest=/etc/systemd/system/zen-secnodetracker.service
+  register: write_zen_node
+
+- name: reload systemd for zen containers
+  command: systemctl daemon-reload
+  when: write_zen_node.changed
 
 - name: Creating config files
   copy:
@@ -132,36 +153,23 @@
     - { value: '{{ region }}', path: '/mnt/zen/secnode/region' }
     - { value: 'http://devtracksys.secnodes.com', path: '/mnt/zen/secnode/serverurl'}
     - { value: '{{ stakeaddr }}', path: '/mnt/zen/secnode/stakeaddr'}
-
+  notify: restart_zen-secnodetracker
 
 - name: Creating the zen configuration
   template: src=zen.conf.j2 dest=/mnt/zen/config/zen.conf
-
-
-- name: Installing zen-node service
-  template: src=zen-node.service dest=/etc/systemd/system/zen-node.service
-  register: write_acme_zen
-
-- name: Installing zen-secnodetracker service
-  template: src=zen-secnodetracker.service dest=/etc/systemd/system/zen-secnodetracker.service
-  register: write_acme_zen
-
-- name: reload systemd for zen containers
-  command: systemctl daemon-reload
-  when: write_acme_zen.changed
+  notify: restart_zen-node
 
 - name: Enabling and starting zen-node container services...
   service:
     name: zen-node
-    state: restarted
+    state: started
     enabled: yes
 
 - name: Enabling and starting zen-secnodetracker container services...
   service:
     name: zen-secnodetracker
-    state: restarted
+    state: started
     enabled: yes
-  ignore_errors: yes
 
 - name: Configure ufw defaults
   ufw:

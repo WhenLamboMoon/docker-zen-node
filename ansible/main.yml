@@ -1,10 +1,17 @@
 ---
+# Deploy zen-node and zen-securenodetracker
 
 - name: configure and deploy zen secnodes
   hosts: zen-nodes
-  gather_facts: false
   remote_user: root
-
+  gather_facts: false
+  pre_tasks:
+  - name: Install python2 for Ansible
+    raw: bash -c "test -e /usr/bin/python || (apt -qqy update && apt install -qqy python-minimal)"
+    register: output
+    changed_when: output.stdout != ""
+  - name: Gathering Facts
+    setup:
   roles:
     - zen-node
 
@@ -12,9 +19,6 @@
   connection: local
   gather_facts: false
   tasks:
-    - name: install python 2
-      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
-
     - name: copy results to local file
       template: src=output.j2 dest="/tmp/zen-node-results"
 

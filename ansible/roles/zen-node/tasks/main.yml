@@ -29,13 +29,8 @@
 
 
 - name: Add swapfile to /etc/fstab
-  blockinfile:
-    path: /etc/fstab
-    block: /swapfile none swap sw 0 0
-    backup: yes
+  lineinfile: dest=/etc/fstab line="/swapfile   none    swap    sw    0   0" state=present
   when: write_swapfile.changed
-  ignore_errors: yes
-
 
 - name: Update all packages to the latest version
   apt:

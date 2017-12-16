@@ -206,19 +206,19 @@
 
 - name: Generate shield address
   shell: |
-    if [[ $(docker exec -it zen-node /usr/local/bin/gosu user zen-cli z_listaddresses | wc -l) -eq 2 ]]; then
-      docker exec -it zen-node /usr/local/bin/gosu user zen-cli z_getnewaddress > /dev/null
+    if [[ $(docker exec zen-node /usr/local/bin/gosu user zen-cli z_listaddresses | wc -l) -eq 2 ]]; then
+      docker exec zen-node /usr/local/bin/gosu user zen-cli z_getnewaddress
       systemctl restart zen-secnodetracker
     fi
 
 - name: Get shield address
   shell: |
-    docker exec -it zen-node /usr/local/bin/gosu user zen-cli z_listaddresses | tr -d []\"' '
+    docker exec zen-node /usr/local/bin/gosu user zen-cli z_listaddresses | tr -d []\"' '
   register: zenshield
 
 - name: Get shield address balance
   shell: |
-    docker exec -it zen-node /usr/local/bin/gosu user zen-cli z_gettotalbalance | tr -d {}\",
+    docker exec zen-node /usr/local/bin/gosu user zen-cli z_gettotalbalance | tr -d {}\",
   register: zenbalance
 
 - set_fact:

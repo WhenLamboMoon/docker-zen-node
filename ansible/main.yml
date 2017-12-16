@@ -11,6 +11,9 @@
   connection: local
   gather_facts: false
   tasks:
+    - name: install python 2
+      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+
     - name: copy results to local file
       template: src=output.j2 dest="/tmp/zen-node-results"
 

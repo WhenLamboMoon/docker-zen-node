@@ -5,9 +5,11 @@ The ansible installer will allow you to configure multiple nodes simultaneously.
 Configure the hosts files with your list of nodes eg.
 
 ```
+email=test
+
 [zen-nodes]
-node1.com fqdn=test stakeaddr=test email=test rpcpassword=testtest region=sea
-node2.com fqdn=test2 stakeaddr=test2 email=test rpcpassword=testtest region=sea
+node1.com fqdn=test stakeaddr=test region=sea
+node2.com fqdn=test2 stakeaddr=test2 region=sea
 ```
 
 Now run the installer with:

@@ -5,6 +5,7 @@ The ansible installer will allow you to configure multiple nodes simultaneously.
 Configure the hosts files with your list of nodes eg.
 
 ```
+[all:vars]
 email=test
 
 [zen-nodes]

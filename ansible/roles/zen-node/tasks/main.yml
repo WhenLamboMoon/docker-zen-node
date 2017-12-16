@@ -108,11 +108,6 @@
   register: cer_result
   failed_when: cer_result.rc == 1
 
-
-- name: Creating the zen configuration
-  template: src=zen.conf.j2 dest=/mnt/zen/config/zen.conf
-
-
 - name: Creating the secnode config...
   file:
     path: /mnt/zen/secnode

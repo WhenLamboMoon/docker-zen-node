@@ -108,17 +108,16 @@
   register: cer_result
   failed_when: cer_result.rc == 1
 
-
-- name: Creating the zen configuration
-  template: src=zen.conf.j2 dest=/mnt/zen/config/zen.conf
-
-
 - name: Creating the secnode config...
   file:
     path: /mnt/zen/secnode
     state: directory
     mode: 0755
     recurse: yes
+
+- name: Generate random rpcpassword
+  shell: head -c 32 /dev/urandom | base64
+  register: rpcpassword
 
 
 - name: Creating config files
@@ -132,7 +131,7 @@
     - { value: '127.0.0.1', path: '/mnt/zen/secnode/rpcbind'}
     - { value: '18231', path: '/mnt/zen/secnode/rpcport'}
     - { value: 'user', path: '/mnt/zen/secnode/rpcuser'}
-    - { value: '{{ rpcpassword }}', path: '/mnt/zen/secnode/rpcpassword'}
+    - { value: '{{ rpcpassword.stdout }}', path: '/mnt/zen/secnode/rpcpassword'}
     - { value: 'ts1.eu,ts1.na,ts1.sea', path: '/mnt/zen/secnode/servers'}
     - { value: 'ts1.{{ region }}', path: '/mnt/zen/secnode/home'}
     - { value: '{{ region }}', path: '/mnt/zen/secnode/region' }

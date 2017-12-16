@@ -25,6 +25,8 @@ acme.sh will be used to provision and maintain a valid SSL certificate for your 
 Invoking the script is best done on a fresh installation, however executing install script again should not
 cause any issues.
 
+*Note:* Check the [ansible installer](https://github.com/WhenLamboMoon/docker-zen-node/tree/master/ansible) if you plan on installing multiple nodes
+
 ```
 curl -O https://raw.githubusercontent.com/WhenLamboMoon/docker-zen-node/master/install.sh
 chmod +x install.sh

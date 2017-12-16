@@ -1,0 +1,37 @@
+---
+# Check the status of all zen-nodes
+
+- name: Check the status of all zen-nodes
+  hosts: zen-nodes
+  remote_user: root
+  tasks:
+    - name: Get current block
+      shell: |
+        docker exec zen-node /usr/local/bin/gosu user zen-cli getinfo | grep \"blocks\" | tr -d \",
+      register: zenblock
+
+    - name: Get shield address
+      shell: |
+        docker exec zen-node /usr/local/bin/gosu user zen-cli z_listaddresses | tr -d []\"' '
+      register: zenshield
+
+    - name: Get shield address balance
+      shell: |
+        docker exec zen-node /usr/local/bin/gosu user zen-cli z_gettotalbalance | tr -d {}\",
+      register: zenbalance
+
+    - set_fact:
+        zenshield: "{{ zenshield.stdout }}"
+        zenbalance: "{{ zenbalance.stdout }}"
+
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: copy results to local file
+      template: src=output.j2 dest="/tmp/zen-node-results"
+
+    - name: output results
+      command: cat /tmp/zen-node-results
+      register: cat
+    - debug: var=cat.stdout_lines

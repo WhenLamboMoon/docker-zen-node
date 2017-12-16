@@ -2,7 +2,7 @@
 
 The ansible installer will allow you to configure multiple nodes simultaneously.
 
-If you have an existing node it will be easiest to run the installer from that node. 
+If you have an existing node it will be easiest to run the installer from that node.
 
 ```
 apt-get install ansible
@@ -31,7 +31,7 @@ node3.example.com
 If you are running this from an existing node, jump down to the [bootstrap node](https://github.com/WhenLamboMoon/docker-zen-node/tree/master/ansible#bootstraping-the-blockchain) section
 to speed up node installation.
 
-Now run the installer, this will install the securenodes on all of your listed hosts. 
+Now run the installer, this will install the securenodes on all of your listed hosts.
 
 ```
 ansible-playbook -i hosts main.yml
@@ -60,6 +60,8 @@ Balance:
 You will now need to send the 1 ZEN to the shield addresses that have a balance of 0.0
 
 ### Bootstraping the blockchain
+
+*Bootstrapping currently does not work.*
 
 If you are running the installer on the same server as an existing zen-node,
 you can bootstrap/seed the initial blockchain to your new nodes so they can sync faster.
@@ -90,3 +92,13 @@ ansible-playbook -i hosts upgrade.yml
 
 This will upgrade restart the required services. It is recommended you subscribe to
 [announcement tracking](https://github.com/WhenLamboMoon/docker-zen-node/issues/28) to receive email notifications.
+
+### Status
+
+You may check the status of your nodes anytime with the command:
+
+```
+ansible-playbook -i hosts status.yml
+```
+
+This will report the node name, shield address, balance and current block.

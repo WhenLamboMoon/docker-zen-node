@@ -222,6 +222,11 @@
       systemctl restart zen-secnodetracker
     fi
 
+- name: Get current block
+  shell: |
+    docker exec zen-node /usr/local/bin/gosu user zen-cli getinfo | grep \"blocks\" | tr -d \",
+  register: zenblock
+
 - name: Get shield address
   shell: |
     docker exec zen-node /usr/local/bin/gosu user zen-cli z_listaddresses | tr -d []\"' '

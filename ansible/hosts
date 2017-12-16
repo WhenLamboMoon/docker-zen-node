@@ -1,4 +1,5 @@
-# Parametesr passed to all hosts
+# Parameters passed to all hosts
+[all:vars]
 email=test@example.com
 region=sea
 

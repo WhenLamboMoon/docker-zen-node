@@ -116,7 +116,7 @@
     recurse: yes
 
 - name: Generate random rpcpassword
-  shell: $(head -c 32 /dev/urandom | base64)
+  shell: head -c 32 /dev/urandom | base64
   register: rpcpassword
 
 

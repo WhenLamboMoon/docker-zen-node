@@ -49,6 +49,7 @@
     - fail2ban
     - unattended-upgrades
     - ufw
+  register: install_packages
 
 
 - name: Start docker
@@ -68,8 +69,7 @@
     - /mnt/zen/config
     - /mnt/zen/data
     - /mnt/zen/zcash-params
-    - certs
-
+    - /mnt/zen/certs
 
 - name: Installing acme container service
   template: src=acme-sh.service dest=/etc/systemd/system/acme-sh.service
@@ -178,6 +178,7 @@
   with_items:
     - { direction: 'incoming', policy: 'deny' }
     - { direction: 'outgoing', policy: 'allow' }
+  when: install_packages.changed
 
 
 - name: Configure ufw rules
@@ -191,17 +192,19 @@
     - { rule: 'allow', port: '80', proto: 'tcp' }
     - { rule: 'allow', port: '443', proto: 'tcp' }
     - { rule: 'allow', port: '9033', proto: 'tcp' }
+  when: install_packages.changed
 
 
-- name: ufw | enable
+- name: ufw enable
   command: ufw --force enable
-
+  when: install_packages.changed
 
 - name: Enabling fail2ban services...
   service:
     name: fail2ban
     state: started
     enabled: yes
+  when: install_packages.changed
 
 
 - name: Waiting for node to fetch params ...

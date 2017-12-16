@@ -38,3 +38,14 @@ Balance:
 ```
 
 You may now send your 1 ZEN to this shield address.
+
+### Upgrading
+
+The installer has a handy way to update all of your zen-nodes:
+
+```
+ansible-playbook -i hosts upgrade.yaml
+```
+
+This will upgrade restart the required services. It is recommended you subscribe to
+[announcement tracking](https://github.com/WhenLamboMoon/docker-zen-node/issues/28) to receive email notifications.

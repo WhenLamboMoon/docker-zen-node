@@ -42,12 +42,30 @@ Balance:
 
 You may now send your 1 ZEN to this shield address.
 
+### Bootstraping the blockchain
+
+If you have installed ZEN previously on the same host as you are running the ansible installer,
+you may bootstrap/seed the initial blockchain to your new nodes so they can sync faster.
+
+Simply add the new nodes to your hosts inventory file as:
+
+```
+[bootstrap-nodes]
+node1.example.com
+```
+
+Now run the bootstrap playbook:
+
+```
+ansible-playbook -i hosts bootstrap.yml
+```
+
 ### Upgrading
 
 The installer has a handy way to update all of your zen-nodes:
 
 ```
-ansible-playbook -i hosts upgrade.yaml
+ansible-playbook -i hosts upgrade.yml
 ```
 
 This will upgrade restart the required services. It is recommended you subscribe to

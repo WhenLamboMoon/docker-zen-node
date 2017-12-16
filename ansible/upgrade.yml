@@ -1,4 +1,5 @@
 ---
+# Upgrade zen secure nodes
 
 - name: upgrade zen secnodes
   hosts: zen-nodes

@@ -1,0 +1,16 @@
+---
+# Bootstrap new zen secure nodes
+
+- name: Bootstrap new zen secure nodes
+  hosts: bootstrap-nodes
+  remote_user: root
+
+  tasks:
+    - name: Bootstraping blockchain to new nodes (this may take a while)
+      copy:
+        src: "/mnt/zen/config/{{ item }}"
+        dest: "/mnt/zen/config/"
+      with_items:
+        - 'blocks'
+        - 'chainstate'
+        - 'database'

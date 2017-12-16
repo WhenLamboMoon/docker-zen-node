@@ -4,4 +4,4 @@
   service: name=zen-secnodetracker state=restarted enabled=yes
 
 - name: restart_zen-node
-  service: name=zen-secnodetracker state=restarted enabled=yes
+  service: name=zen-node state=restarted enabled=yes

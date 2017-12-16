@@ -2,25 +2,42 @@
 
 The ansible installer will allow you to configure multiple nodes simultaneously.
 
-Configure the hosts files with your list of nodes eg.
+If you have an existing node it will be easiest to run the installer from that node. 
 
 ```
+apt-get install ansible
+git clone https://github.com/WhenLamboMoon/docker-zen-node/
+cd docker-zen-node/ansible/
+```
+
+Configure the hosts files with your list of nodes, an example hosts file would look like this:
+
+```
+# Parameters passed to all hosts
 [all:vars]
-email=test
+email=test@example.com
+region=na
 
 [zen-nodes]
-node1.com fqdn=test stakeaddr=test region=sea
-node2.com fqdn=test2 stakeaddr=test2 region=sea
+node.example.com fqdn=node.example.com stakeaddr=test
+node2.example.com fqdn=node3.example.com stakeaddr=test
+node3.example.com fqdn=node2.example.com stakeaddr=test
+
+[bootstrap-nodes]
+node2.example.com
+node3.example.com
 ```
 
-Now run the installer with:
+If you are running this from an existing node, jump down to the [bootstrap node](https://github.com/WhenLamboMoon/docker-zen-node/tree/master/ansible#bootstraping-the-blockchain) section
+to speed up node installation.
+
+Now run the installer, this will install the securenodes on all of your listed hosts. 
 
 ```
 ansible-playbook -i hosts main.yml
 ```
 
-When the installation completes, you can check the output of all your
-installed nodes will be stored in /tmp/zen-node-results
+When the installation completes, all your installed nodes details will be stored in /tmp/zen-node-results
 
 ```
 cat /tmp/zen-node-results
@@ -40,18 +57,19 @@ Balance:
   total: 0.00
 ```
 
-You may now send your 1 ZEN to this shield address.
+You will now need to send the 1 ZEN to the shield addresses that have a balance of 0.0
 
 ### Bootstraping the blockchain
 
-If you have installed ZEN previously on the same host as you are running the ansible installer,
-you may bootstrap/seed the initial blockchain to your new nodes so they can sync faster.
+If you are running the installer on the same server as an existing zen-node,
+you can bootstrap/seed the initial blockchain to your new nodes so they can sync faster.
 
 Simply add the new nodes to your hosts inventory file as:
 
 ```
 [bootstrap-nodes]
-node1.example.com
+new-node1.example.com
+new-node2.example.com
 ```
 
 Now run the bootstrap playbook:
@@ -59,6 +77,8 @@ Now run the bootstrap playbook:
 ```
 ansible-playbook -i hosts bootstrap.yml
 ```
+
+This will copy the blockchain from your current node (running the installer) to your new nodes. After you run this, remove the nodes from the [bootstrap-nodes] group and run the full installer.
 
 ### Upgrading
 

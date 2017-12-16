@@ -238,5 +238,6 @@
   register: zenbalance
 
 - set_fact:
+    zenblock: "{{ zenblock.stdout }}"
     zenshield: "{{ zenshield.stdout }}"
     zenbalance: "{{ zenbalance.stdout }}"

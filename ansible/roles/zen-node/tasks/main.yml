@@ -214,7 +214,7 @@
 
 - name: Generate shield address
   shell: |
-    if [[ $(docker exec zen-node /usr/local/bin/gosu user zen-cli z_listaddresses | wc -l) -eq 2 ]]; then
+    if [ $(docker exec zen-node /usr/local/bin/gosu user zen-cli z_listaddresses | wc -l) -eq 2 ]; then
       docker exec zen-node /usr/local/bin/gosu user zen-cli z_getnewaddress
       systemctl restart zen-secnodetracker
     fi

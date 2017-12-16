@@ -4,7 +4,7 @@
 - name: Creating a 4GB swap file
   command: fallocate -l 4G /swapfile
   register: write_swapfile
-  when: ansible_memory_mb.real.free < 4096
+  when: ansible_memory_mb.real.total + ansible_memory_mb.swap.total < 4096
   ignore_errors: yes
 
 
@@ -40,6 +40,7 @@
 - name: Update all packages to the latest version
   apt:
     upgrade: dist
+
 
 - name: Install required packages
   apt:
@@ -77,9 +78,11 @@
 
 - name: Installing acme container service
   template: src=acme-sh.service dest=/etc/systemd/system/acme-sh.service
+  register: write_acme_systemd
 
 - name: reload systemd for acme-sh
   command: systemctl daemon-reload
+  when: write_acme_systemd.changed
 
 - name: Restart acme-sh
   service:
@@ -143,12 +146,15 @@
 
 - name: Installing zen-node service
   template: src=zen-node.service dest=/etc/systemd/system/zen-node.service
+  register: write_acme_zen
 
 - name: Installing zen-secnodetracker service
   template: src=zen-secnodetracker.service dest=/etc/systemd/system/zen-secnodetracker.service
+  register: write_acme_zen
 
 - name: reload systemd for zen containers
   command: systemctl daemon-reload
+  when: write_acme_zen.changed
 
 - name: Enabling and starting zen-node container services...
   service:

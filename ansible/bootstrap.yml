@@ -3,6 +3,7 @@
 
 - name: Bootstrap new zen secure nodes
   hosts: bootstrap-nodes
+  gather_facts: false
   remote_user: root
 
   tasks:

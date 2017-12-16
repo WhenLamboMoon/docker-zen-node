@@ -2,6 +2,7 @@
 
 - name: configure and deploy zen secnodes
   hosts: zen-nodes
+  gather_facts: false
   remote_user: root
 
   roles:

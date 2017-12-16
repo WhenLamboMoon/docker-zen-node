@@ -21,3 +21,9 @@
         name: zen-secnodetracker
         state: restarted
         enabled: yes
+
+    - name: Removing old/unused docker images
+      shell: |
+        docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
+        docker rmi $(docker images | grep "none" | awk '/ / { print $3 }')
+      ignore_errors: yes

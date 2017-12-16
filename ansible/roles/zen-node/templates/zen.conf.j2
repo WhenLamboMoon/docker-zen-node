@@ -1,0 +1,14 @@
+rpcport=18231
+rpcallowip=127.0.0.0/24
+server=1
+# Docker doesn't run as daemon
+daemon=0
+listen=1
+txindex=1
+logtimestamps=1
+### testnet config
+testnet=$testnet
+rpcuser=user
+rpcpassword={{ rpcpassword }}
+tlscertpath=/mnt/zen/certs/{{ fqdn }}/{{ fqdn }}.cer
+tlskeypath=/mnt/zen/certs/{{ fqdn }}/{{ fqdn }}.key

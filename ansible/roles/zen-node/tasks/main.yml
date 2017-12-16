@@ -1,0 +1,232 @@
+---
+
+
+- name: Creating a 4GB swap file
+  command: fallocate -l 4G /swapfile
+  register: write_swapfile
+  when: ansible_memory_mb.real.total + ansible_memory_mb.swap.total < 4096
+  ignore_errors: yes
+
+
+- name: Set swap file permissions
+  file:
+    path: /swapfile
+    mode: 0600
+  when: write_swapfile.changed
+  ignore_errors: yes
+
+
+- name: Build swapfile
+  command: mkswap /swapfile
+  when: write_swapfile.changed
+  ignore_errors: yes
+
+
+- name: Enable swapfile
+  command: swapon /swapfile
+  when: write_swapfile.changed
+  ignore_errors: yes
+
+
+- name: Add swapfile to /etc/fstab
+  blockinfile:
+    path: /etc/fstab
+    block: /swapfile none swap sw 0 0
+    backup: yes
+  when: write_swapfile.changed
+  ignore_errors: yes
+
+
+- name: Update all packages to the latest version
+  apt:
+    upgrade: dist
+
+
+- name: Install required packages
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - docker.io
+    - apt-transport-https
+    - lsb-release
+    - curl
+    - fail2ban
+    - unattended-upgrades
+    - ufw
+
+
+- name: Start docker
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+
+- name: Create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+    recurse: yes
+  with_items:
+    - /mnt/zen/config
+    - /mnt/zen/data
+    - /mnt/zen/zcash-params
+    - certs
+
+
+- name: Installing acme container service
+  template: src=acme-sh.service dest=/etc/systemd/system/acme-sh.service
+  register: write_acme_systemd
+
+- name: reload systemd for acme-sh
+  command: systemctl daemon-reload
+  when: write_acme_systemd.changed
+
+- name: Restart acme-sh
+  service:
+    name: acme-sh
+    state: restarted
+    enabled: yes
+
+
+- name: Waiting for acme-sh to come up
+  command: docker exec acme-sh --list
+  register: wait_result
+  until: wait_result.stdout != ""
+  retries: 10
+  delay: 5
+
+
+- debug:
+    msg: "{{ wait_result.stdout }}"
+
+
+- name: "Issuing cert for {{ fqdn }}..."
+  command: "docker exec acme-sh --issue -d {{ fqdn }} --standalone"
+  register: cer_result
+  failed_when: cer_result.rc == 1
+
+
+- name: Creating the zen configuration
+  template: src=zen.conf.j2 dest=/mnt/zen/config/zen.conf
+
+
+- name: Creating the secnode config...
+  file:
+    path: /mnt/zen/secnode
+    state: directory
+    mode: 0755
+    recurse: yes
+
+
+- name: Creating config files
+  copy:
+    content: "{{ item.value }}"
+    dest: "{{ item.path }}"
+  with_items:
+    - { value: '{{ email }}', path: '/mnt/zen/secnode/email' }
+    - { value: '{{ fqdn }}', path: '/mnt/zen/secnode/fqdn' }
+    - { value: '127.0.0.1', path: '/mnt/zen/secnode/rpcallowip'}
+    - { value: '127.0.0.1', path: '/mnt/zen/secnode/rpcbind'}
+    - { value: '18231', path: '/mnt/zen/secnode/rpcport'}
+    - { value: 'user', path: '/mnt/zen/secnode/rpcuser'}
+    - { value: '{{ rpcpassword }}', path: '/mnt/zen/secnode/rpcpassword'}
+    - { value: 'ts1.eu,ts1.na,ts1.sea', path: '/mnt/zen/secnode/servers'}
+    - { value: 'ts1.{{ region }}', path: '/mnt/zen/secnode/home'}
+    - { value: '{{ region }}', path: '/mnt/zen/secnode/region' }
+    - { value: 'http://devtracksys.secnodes.com', path: '/mnt/zen/secnode/serverurl'}
+    - { value: '{{ stakeaddr }}', path: '/mnt/zen/secnode/stakeaddr'}
+
+
+- name: Creating the zen configuration
+  template: src=zen.conf.j2 dest=/mnt/zen/config/zen.conf
+
+
+- name: Installing zen-node service
+  template: src=zen-node.service dest=/etc/systemd/system/zen-node.service
+  register: write_acme_zen
+
+- name: Installing zen-secnodetracker service
+  template: src=zen-secnodetracker.service dest=/etc/systemd/system/zen-secnodetracker.service
+  register: write_acme_zen
+
+- name: reload systemd for zen containers
+  command: systemctl daemon-reload
+  when: write_acme_zen.changed
+
+- name: Enabling and starting zen-node container services...
+  service:
+    name: zen-node
+    state: restarted
+    enabled: yes
+
+- name: Enabling and starting zen-secnodetracker container services...
+  service:
+    name: zen-secnodetracker
+    state: restarted
+    enabled: yes
+  ignore_errors: yes
+
+- name: Configure ufw defaults
+  ufw:
+    direction: "{{ item.direction }}"
+    policy: "{{ item.policy }}"
+  with_items:
+    - { direction: 'incoming', policy: 'deny' }
+    - { direction: 'outgoing', policy: 'allow' }
+
+
+- name: Configure ufw rules
+  ufw:
+    rule: "{{ item.rule }}"
+    port: "{{ item.port }}"
+    proto: "{{ item.proto }}"
+  with_items:
+    - { rule: 'allow', port: '{{ ssh_port | default("22") }}', proto: 'tcp' }
+    - { rule: 'limit', port: '{{ ssh_port | default("22") }}', proto: 'tcp' }
+    - { rule: 'allow', port: '80', proto: 'tcp' }
+    - { rule: 'allow', port: '443', proto: 'tcp' }
+    - { rule: 'allow', port: '9033', proto: 'tcp' }
+
+
+- name: ufw | enable
+  command: ufw --force enable
+
+
+- name: Enabling fail2ban services...
+  service:
+    name: fail2ban
+    state: started
+    enabled: yes
+
+
+- name: Waiting for node to fetch params ...
+  command: docker exec -it zen-node /usr/local/bin/gosu user zen-cli getinfo
+  register: fetch_param_result
+  until: fetch_param_result.rc == 0
+  retries: 100
+  delay: 30
+
+
+- name: Generate shield address
+  shell: |
+    if [[ $(docker exec -it zen-node /usr/local/bin/gosu user zen-cli z_listaddresses | wc -l) -eq 2 ]]; then
+      docker exec -it zen-node /usr/local/bin/gosu user zen-cli z_getnewaddress > /dev/null
+      systemctl restart zen-secnodetracker
+    fi
+
+- name: Get shield address
+  shell: |
+    docker exec -it zen-node /usr/local/bin/gosu user zen-cli z_listaddresses | tr -d []\"' '
+  register: zenshield
+
+- name: Get shield address balance
+  shell: |
+    docker exec -it zen-node /usr/local/bin/gosu user zen-cli z_gettotalbalance | tr -d {}\",
+  register: zenbalance
+
+- set_fact:
+    zenshield: "{{ zenshield.stdout }}"
+    zenbalance: "{{ zenbalance.stdout }}"

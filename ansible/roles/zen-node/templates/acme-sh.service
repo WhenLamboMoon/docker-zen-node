@@ -1,0 +1,14 @@
+[Unit]
+Description=acme.sh container
+After=docker.service
+Requires=docker.service
+[Service]
+TimeoutStartSec=10m
+Restart=always
+ExecStartPre=-/usr/bin/docker stop acme-sh
+ExecStartPre=-/usr/bin/docker rm  acme-sh
+# Always pull the latest docker image
+ExecStartPre=/usr/bin/docker pull neilpang/acme.sh
+ExecStart=/usr/bin/docker run --rm --net=host -v /mnt/zen/certs:/acme.sh --name acme-sh neilpang/acme.sh daemon
+[Install]
+WantedBy=multi-user.target

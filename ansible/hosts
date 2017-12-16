@@ -1,0 +1,2 @@
+[zen-nodes]
+localhost fqdn=node.example.com stakeaddr=test email=test@example.com rpcpassword=testtest region=sea

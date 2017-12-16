@@ -1,0 +1,4 @@
+---
+
+- name: restart_zen-secondtracker
+  service: name=zen-secnodetracker state=restarted

@@ -153,6 +153,7 @@
     - { value: '{{ region }}', path: '/mnt/zen/secnode/region' }
     - { value: 'http://devtracksys.secnodes.com', path: '/mnt/zen/secnode/serverurl'}
     - { value: '{{ stakeaddr }}', path: '/mnt/zen/secnode/stakeaddr'}
+    - { value: '4', path: '/mnt/zen/secnode/ipv'}
   notify: restart_zen-secnodetracker
 
 - name: Creating the zen configuration

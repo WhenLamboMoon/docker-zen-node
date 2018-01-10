@@ -128,6 +128,7 @@ echo -n "ts1.$region" > /mnt/zen/secnode/home
 echo -n $region > /mnt/zen/secnode/region
 echo -n 'http://devtracksys.secnodes.com' > /mnt/zen/secnode/serverurl
 echo -n $stakeaddr > /mnt/zen/secnode/stakeaddr
+echo -n '4' > /mnt/zen/secnode/ipv
 
 print_status "Installing zend service..."
 cat <<EOF > /etc/systemd/system/zen-node.service

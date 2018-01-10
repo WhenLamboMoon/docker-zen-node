@@ -9,6 +9,11 @@ else
   exit 1
 fi
 
+# Fix for new ipv param
+if [ ! -f "/mnt/zen/secnode/ipv" ]; then
+  echo "4" > /mnt/zen/secnode/ipv
+fi
+
 # Copy the zencash params
 cp -r /mnt/zen/zcash-params /mnt/zcash-params
 

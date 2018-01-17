@@ -31,7 +31,9 @@ echo "stakeaddr: $stakeaddr"
 echo "#########################"
 
 # Create swapfile if less then 4GB memory
-totalm=$(free -m | awk '/^Mem:/{print $2}')
+totalmem=$(free -m | awk '/^Mem:/{print $2}')
+totalswp=$(free -m | awk '/^Swap:/{print $2}')
+totalm=$(($totalmem + $totalswp))
 if [ $totalm -lt 4000 ]; then
   print_status "Server memory is less then 4GB..."
   if ! grep -q '/swapfile' /etc/fstab ; then

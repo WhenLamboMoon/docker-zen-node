@@ -106,6 +106,23 @@ rsync -avh --progress /mnt/zen/config/blocks /mnt/zen/config/chainstate /mnt/zen
 
 This will save you the 1-2 hours wait for a new node to download the full chain.
 
+## Moving/removing nodes
+
+If you want to move the ZEN off the node you need to run the following commands:
+
+```
+# Get your T_ADDR
+docker exec -it zen-node gosu user zen-cli z_listaddresses
+
+# Get the balance of your T_ADDR
+docker exec -it zen-node gosu user zen-cli z_getbalance T_ADDR
+
+# Send the balance to another address
+docker exec zen-node gosu user zen-cl i z_sendmany "T_ADDR" "[{\"amount\": 0.00, \"address\": \"TO_ZEN_ADDR\"}]"
+```
+
+Remember to deduct the 0.0001 fee from your balance if you wish to empty the entire balance.
+
 ## Troubleshooting
 
 If you need to execute commands with `zen-cli` you will need to append the following:

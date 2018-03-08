@@ -209,7 +209,7 @@
 
 
 - name: Waiting for node to fetch params ...
-  command: docker exec -it zen-node /usr/local/bin/gosu user zen-cli getinfo
+  command: docker exec zen-node /usr/local/bin/gosu user zen-cli getinfo
   register: fetch_param_result
   until: fetch_param_result.rc == 0
   retries: 100

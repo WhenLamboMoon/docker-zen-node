@@ -118,7 +118,7 @@ docker exec -it zen-node gosu user zen-cli z_listaddresses
 docker exec -it zen-node gosu user zen-cli z_getbalance T_ADDR
 
 # Send the balance to another address
-docker exec zen-node gosu user zen-cl i z_sendmany "T_ADDR" "[{\"amount\": 0.00, \"address\": \"TO_ZEN_ADDR\"}]"
+docker exec zen-node gosu user zen-cli z_sendmany "T_ADDR" "[{\"amount\": 0.00, \"address\": \"TO_ZEN_ADDR\"}]"
 ```
 
 Remember to deduct the 0.0001 fee from your balance if you wish to empty the entire balance.

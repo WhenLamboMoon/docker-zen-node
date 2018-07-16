@@ -1,6 +1,8 @@
 FROM node:8
 
 ENV TINI_VERSION v0.16.1
+ENV NODE_ENV production
+ENV ZENCONF /mnt/zen/config/zen.conf
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 RUN chmod +x /tini
 

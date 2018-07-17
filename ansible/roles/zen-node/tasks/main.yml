@@ -136,24 +136,8 @@
   command: systemctl daemon-reload
   when: write_zen_node.changed
 
-- name: Creating config files
-  copy:
-    content: "{{ item.value }}"
-    dest: "{{ item.path }}"
-  with_items:
-    - { value: '{{ email }}', path: '/mnt/zen/secnode/email' }
-    - { value: '{{ fqdn }}', path: '/mnt/zen/secnode/fqdn' }
-    - { value: '127.0.0.1', path: '/mnt/zen/secnode/rpcallowip'}
-    - { value: '127.0.0.1', path: '/mnt/zen/secnode/rpcbind'}
-    - { value: '18231', path: '/mnt/zen/secnode/rpcport'}
-    - { value: 'user', path: '/mnt/zen/secnode/rpcuser'}
-    - { value: '{{ rpcpassword.stdout }}', path: '/mnt/zen/secnode/rpcpassword'}
-    - { value: 'ts1.eu,ts1.na,ts1.sea', path: '/mnt/zen/secnode/servers'}
-    - { value: 'ts1.{{ region }}', path: '/mnt/zen/secnode/home'}
-    - { value: '{{ region }}', path: '/mnt/zen/secnode/region' }
-    - { value: 'http://devtracksys.secnodes.com', path: '/mnt/zen/secnode/serverurl'}
-    - { value: '{{ stakeaddr }}', path: '/mnt/zen/secnode/stakeaddr'}
-    - { value: '4', path: '/mnt/zen/secnode/ipv'}
+- name: Creating the zen secnode configuration
+  template: src=config.json.j2 dest=/mnt/zen/secnode/config.json
   notify: restart_zen-secnodetracker
 
 - name: Creating the zen configuration

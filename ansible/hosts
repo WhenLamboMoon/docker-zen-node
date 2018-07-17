@@ -4,6 +4,6 @@ email=test@example.com
 region=sea
 
 [zen-nodes]
-localhost fqdn=node.example.com stakeaddr=test
+localhost fqdn=node.example.com stakeaddr=test nodetype=secure
 
 [bootstrap-nodes]

@@ -19,9 +19,9 @@ email=test@example.com
 region=na
 
 [zen-nodes]
-node.example.com fqdn=node.example.com stakeaddr=test
-node2.example.com fqdn=node3.example.com stakeaddr=test
-node3.example.com fqdn=node2.example.com stakeaddr=test
+node.example.com fqdn=node.example.com stakeaddr=test nodetype=secure
+node2.example.com fqdn=node3.example.com stakeaddr=test nodetype=secure
+node3.example.com fqdn=node2.example.com stakeaddr=test nodetype=secure
 
 [bootstrap-nodes]
 node2.example.com

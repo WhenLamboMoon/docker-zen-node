@@ -118,19 +118,32 @@ EOF
 
 print_status "Creating the secnode config..."
 mkdir -p /mnt/zen/secnode/
-echo -n $email > /mnt/zen/secnode/email
-echo -n $fqdn > /mnt/zen/secnode/fqdn
-echo -n '127.0.0.1' > /mnt/zen/secnode/rpcallowip
-echo -n '127.0.0.1' > /mnt/zen/secnode/rpcbind
-echo -n '18231' > /mnt/zen/secnode/rpcport
-echo -n 'user' > /mnt/zen/secnode/rpcuser
-echo -n $rpcpassword > /mnt/zen/secnode/rpcpassword
-echo -n 'ts1.eu,ts1.na,ts1.sea' > /mnt/zen/secnode/servers
-echo -n "ts1.$region" > /mnt/zen/secnode/home
-echo -n $region > /mnt/zen/secnode/region
-echo -n 'http://devtracksys.secnodes.com' > /mnt/zen/secnode/serverurl
-echo -n $stakeaddr > /mnt/zen/secnode/stakeaddr
-echo -n '4' > /mnt/zen/secnode/ipv
+cat << EOF > /mnt/zen/secnode/config.json
+{
+ "active": "secure",
+ "secure": {
+  "nodetype": "secure",
+  "nodeid": null,
+  "servers": [
+   "ts2.eu",
+   "ts1.eu",
+   "ts3.eu",
+   "ts4.eu",
+   "ts4.na",
+   "ts3.na",
+   "ts2.na",
+   "ts1.na"
+  ],
+  "stakeaddr": "$stakeaddr",
+  "email": "$email",
+  "fqdn": "$fqdn",
+  "ipv": "4",
+  "region": "$region",
+  "home": "ts1.$region",
+  "category": "none"
+ }
+}
+EOF
 
 print_status "Installing zend service..."
 cat <<EOF > /etc/systemd/system/zen-node.service

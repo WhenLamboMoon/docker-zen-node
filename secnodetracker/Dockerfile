@@ -22,7 +22,6 @@ WORKDIR /home/node/
 RUN cd /home/node/ \
     && git clone https://github.com/ZencashOfficial/secnodetracker.git \
     && cd secnodetracker \
-    && git checkout 75aaa01bc84f5d549c699e02172c471669d33ca4 \
     && npm install
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh

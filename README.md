@@ -30,17 +30,18 @@ cause any issues.
 ```
 curl -O https://raw.githubusercontent.com/WhenLamboMoon/docker-zen-node/master/install.sh
 chmod +x install.sh
-./install.sh <stakeaddr> <email> <fqdn> <region>
+./install.sh <stakeaddr> <email> <fqdn> <region> <nodetype>
 ```
 
 - Stakeaddr is the transparent address which has your 42 ZEN
 - Email is your notification email address should your node have issues
 - FQDN is the hostname which must point to the IP address of your server
-- Region must either be eu, na or sea
+- Region must either be eu or na
+- Nodetype is secure or super
 
 Example:
 
-`./install.sh ztjcr2DSYhMZZ3WFFeoK2hDxhmK4VP3QcgK email@example.com zennode.example.com sea`
+`./install.sh ztjcr2DSYhMZZ3WFFeoK2hDxhmK4VP3QcgK email@example.com zennode.example.com na secure`
 
 The script will install the required dependencies and deploy the three containers on your host.
 
@@ -86,7 +87,6 @@ Finally, check the securenode tracker website to see if your node has been regis
 
 - NA: https://securenodes.na.zensystem.io/
 - EU: https://securenodes.eu.zensystem.io/
-- SEA: https://securenodes.sea.zensystem.io/
 
 **Please Note:** It may take a few hours for your server to fully update to the latest block. Your node will not come online until this has been fully updated.
 

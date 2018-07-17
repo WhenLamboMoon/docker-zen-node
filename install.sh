@@ -9,7 +9,7 @@ print_status() {
 }
 
 if [ $# -ne 4 ]; then
-    echo "Execution format ./install.sh stakeaddr email fqdn region (eu, na or sea)"
+    echo "Execution format ./install.sh stakeaddr email fqdn region nodetype"
     exit
 fi
 
@@ -18,6 +18,12 @@ stakeaddr=${1}
 email=${2}
 fqdn=${3}
 region=${4}
+
+if [ -z "$5" ]; then
+  nodetype=${5}
+else
+  nodetype="secure"
+fi
 
 testnet=0
 rpcpassword=$(head -c 32 /dev/urandom | base64)
@@ -120,9 +126,9 @@ print_status "Creating the secnode config..."
 mkdir -p /mnt/zen/secnode/
 cat << EOF > /mnt/zen/secnode/config.json
 {
- "active": "secure",
+ "active": "$nodetype",
  "secure": {
-  "nodetype": "secure",
+  "nodetype": "$nodetype",
   "nodeid": null,
   "servers": [
    "ts2.eu",

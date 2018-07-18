@@ -127,7 +127,7 @@ mkdir -p /mnt/zen/secnode/
 cat << EOF > /mnt/zen/secnode/config.json
 {
  "active": "$nodetype",
- "secure": {
+ "$nodetype": {
   "nodetype": "$nodetype",
   "nodeid": null,
   "servers": [

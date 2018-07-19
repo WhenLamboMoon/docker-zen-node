@@ -120,7 +120,15 @@ rpcuser=user
 rpcpassword=$rpcpassword
 tlscertpath=/mnt/zen/certs/$fqdn/$fqdn.cer
 tlskeypath=/mnt/zen/certs/$fqdn/$fqdn.key
+#
+port=9033
 EOF
+
+print_status "Trying to determine public ip addresses..."
+publicips=$(dig $fqdn A $fqdn AAAA +short)
+while read -r line; do
+    echo "externalip=$line" >> /mnt/zen/config/zen.conf
+done <<< "$publicips"
 
 print_status "Creating the secnode config..."
 mkdir -p /mnt/zen/secnode/

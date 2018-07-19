@@ -8,7 +8,7 @@ print_status() {
     echo
 }
 
-if [ $# -ne 4 ]; then
+if [ $# -lt 4 ]; then
     echo "Execution format ./install.sh stakeaddr email fqdn region nodetype"
     exit
 fi

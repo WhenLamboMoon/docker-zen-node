@@ -50,6 +50,24 @@ else
   echo "Using external data volume"
 fi
 
+# Copy in any additional SSL trusted CA
+if [ -d "/mnt/zen/certs" ]; then
+  active=$(cat /mnt/zen/secnode/config.json | jq -r '.active')
+  if [ $active == "secure" ]; then
+    domain=$(cat /mnt/zen/secnode/config.json | jq -r '.secure.fqdn')
+  else
+    domain=$(cat /mnt/zen/secnode/config.json | jq -r '.super.fqdn')
+  fi
+
+  if [ -z "$domain" ]; then
+    domain=
+  if [ -f /mnt/zen/certs/$domain/ca.cer ]; then
+    echo "Copying additional trusted SSL certificates"
+    cp /mnt/zen/certs/$domain/ca.cer /usr/local/share/ca-certificates/ca.crt > /dev/null 2>&1 || true
+    update-ca-certificates --fresh
+  fi
+fi
+
 # Fix ownership of the created files/folders
 chown -R user:user /home/user /mnt/zen
 

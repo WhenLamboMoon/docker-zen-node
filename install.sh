@@ -107,7 +107,7 @@ fi
 print_status "Creating the zen configuration."
 cat <<EOF > /mnt/zen/config/zen.conf
 rpcport=18231
-rpcallowip=127.0.0.0
+rpcallowip=127.0.0.1
 server=1
 # Docker doesn't run as daemon
 daemon=0

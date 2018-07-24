@@ -158,6 +158,8 @@ cat << EOF > /mnt/zen/secnode/config.json
  }
 }
 EOF
+# https://github.com/WhenLamboMoon/docker-zen-node/issues/88
+chmod 777 /mnt/zen/secnode/config.json
 
 print_status "Installing zend service..."
 cat <<EOF > /etc/systemd/system/zen-node.service

@@ -13,7 +13,7 @@ acme.sh will run as a docker container and auto-renew your SSL certificates when
 
 ## Requirements
 
-You will need a server with at least 4GB ram (2GB memory w/ 2GB swap is genearlly OK) to run a ZenCash secure node. DigitalOcean and OVH have been popular providers amongst the community.
+You will need a server with at least 4GB ram (2GB memory w/ 2GB swap is generally OK) to run a ZenCash secure node. Common providers can be found here: https://zencash.atlassian.net/wiki/spaces/ZEN/pages/7537074/Community+VPS+List
 
 The script is designed to run on Ubuntu 16.04
 
@@ -53,9 +53,9 @@ The script should execute successfully when you see the output similar to this:
 ztSpgr2Yat7zSMiLNHtyDKGajzSesxabQsRwJnqtomDJU9wd6LzZppnQJyYiNE8sJDEy5MyTiMrSjf3bWcMKgtF9xcEY4eA
 ```
 
-This will be the shield address you need to send 1 ZEN in order for your start accepting challenges. It is recommended you send this in 4 transactions of 0.25 ZEN. As of now, this can only be done using the swing wallet or CLI.
+This will be the shield address you need to send 0.05 ZEN in order for your start accepting challenges. It is recommended you send this in 3 transactions of 0.0167 ZEN. As of now, this can only be done using the swing wallet or CLI.
 
-After you send your 1 ZEN, you may check your node private balance:
+After you send your 0.05 ZEN, you may check your node private balance:
 
 ```
 docker exec zen-node gosu user zen-cli z_gettotalbalance

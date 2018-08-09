@@ -20,9 +20,9 @@ fqdn=${3}
 region=${4}
 
 if [ -z "$5" ]; then
-  nodetype=${5}
-else
   nodetype="secure"
+else
+  nodetype=${5}
 fi
 
 testnet=0

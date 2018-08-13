@@ -136,6 +136,10 @@
   command: systemctl daemon-reload
   when: write_zen_node.changed
 
+- name: Set the servers env
+    set_fact:
+      servers: "{% if nodetype=='super' %}xns{% else %}ts{% endif %}"
+
 - name: Creating the zen secnode configuration
   template: src=config.json.j2 dest=/mnt/zen/secnode/config.json
   notify: restart_zen-secnodetracker

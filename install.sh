@@ -76,8 +76,7 @@ apt-get install certbot -y
 print_status "Issusing cert for $fqdn..."
 certbot certonly -n --agree-tos --register-unsafely-without-email --standalone -d $fqdn
 
-chown -R root:sudo /etc/letsencrypt/
-chmod -R 750 /etc/letsencrypt/
+chmod -R 755 /etc/letsencrypt/
 
 echo \
 "[Unit]

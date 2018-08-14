@@ -20,9 +20,9 @@ fqdn=${3}
 region=${4}
 
 if [ -z "$5" ]; then
-  nodetype=${5}
-else
   nodetype="secure"
+else
+  nodetype=${5}
 fi
 
 testnet=0
@@ -57,7 +57,7 @@ print_status "Populating apt-get cache..."
 apt-get update
 
 print_status "Installing packages required for setup..."
-apt-get install -y docker.io apt-transport-https lsb-release curl fail2ban unattended-upgrades ufw > /dev/null 2>&1
+apt-get install -y docker.io apt-transport-https lsb-release curl fail2ban unattended-upgrades ufw dnsutils > /dev/null 2>&1
 
 systemctl enable docker
 systemctl start docker
@@ -65,49 +65,52 @@ systemctl start docker
 print_status "Creating the docker mount directories..."
 mkdir -p /mnt/zen/{config,data,zcash-params,certs}
 
-print_status "Installing acme container service..."
+print_status "Removing acme container service..."
+rm /etc/systemd/system/acme-sh.service
 
-cat <<EOF > /etc/systemd/system/acme-sh.service
-[Unit]
-Description=acme.sh container
-After=docker.service
-Requires=docker.service
-
-[Service]
-TimeoutStartSec=10m
-Restart=always
-ExecStartPre=-/usr/bin/docker stop acme-sh
-ExecStartPre=-/usr/bin/docker rm  acme-sh
-# Always pull the latest docker image
-ExecStartPre=/usr/bin/docker pull neilpang/acme.sh
-ExecStart=/usr/bin/docker run --rm --net=host -v /mnt/zen/certs:/acme.sh --name acme-sh neilpang/acme.sh daemon
-[Install]
-WantedBy=multi-user.target
-EOF
-
-systemctl daemon-reload
-systemctl enable acme-sh
-systemctl restart acme-sh
-
-print_status "Waiting for acme-sh to come up..."
-until docker exec -it acme-sh --list
-do
-  echo ".."
-  sleep 15
-done
+print_status "Installing certbot..."
+add-apt-repository ppa:certbot/certbot -y
+apt-get update -y
+apt-get install certbot -y
 
 print_status "Issusing cert for $fqdn..."
-docker exec acme-sh --issue -d $fqdn  --standalone
-# Note: error code 2 means cert already isssued
-if [ $? -eq 1 ]; then
-    print_status "Error provisioning certificate for domain.. exiting"
-    exit 1
-fi
+certbot certonly -n --agree-tos --register-unsafely-without-email --standalone -d $fqdn
+
+chmod -R 755 /etc/letsencrypt/
+
+echo \
+"[Unit]
+Description=zenupdate.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/certbot -q renew --deploy-hook 'systemctl restart zen-node && systemctl restart zen-secnodetracker && docker rmi $(docker images --quiet --filter "dangling=true")'
+PrivateTmp=true" | tee /lib/systemd/system/zenupdate.service
+
+echo \
+"[Unit]
+Description=Run zenupdate unit daily @ 06:00:00 (UTC)
+
+[Timer]
+OnCalendar=*-*-* 06:00:00
+Unit=zenupdate.service
+Persistent=true
+
+[Install]
+WantedBy=timers.target" | tee /lib/systemd/system/zenupdate.timer
+
+systemctl daemon-reload
+systemctl stop certbot.timer
+systemctl disable certbot.timer
+
+systemctl start zenupdate.timer
+systemctl enable zenupdate.timer
 
 print_status "Creating the zen configuration."
 cat <<EOF > /mnt/zen/config/zen.conf
 rpcport=18231
 rpcallowip=127.0.0.1
+rpcworkqueue=512
 server=1
 # Docker doesn't run as daemon
 daemon=0
@@ -118,8 +121,8 @@ logtimestamps=1
 testnet=$testnet
 rpcuser=user
 rpcpassword=$rpcpassword
-tlscertpath=/mnt/zen/certs/$fqdn/$fqdn.cer
-tlskeypath=/mnt/zen/certs/$fqdn/$fqdn.key
+tlscertpath=/etc/letsencrypt/live/$fqdn/cert.pem
+tlskeypath=/etc/letsencrypt/live/$fqdn/privkey.pem
 #
 port=9033
 EOF
@@ -131,6 +134,13 @@ while read -r line; do
 done <<< "$publicips"
 
 print_status "Creating the secnode config..."
+
+if [ $nodetype = "super" ]; then
+  servers=xns
+else
+  servers=ts
+fi
+
 mkdir -p /mnt/zen/secnode/
 cat << EOF > /mnt/zen/secnode/config.json
 {
@@ -139,14 +149,14 @@ cat << EOF > /mnt/zen/secnode/config.json
   "nodetype": "$nodetype",
   "nodeid": null,
   "servers": [
-   "ts2.eu",
-   "ts1.eu",
-   "ts3.eu",
-   "ts4.eu",
-   "ts4.na",
-   "ts3.na",
-   "ts2.na",
-   "ts1.na"
+   "${servers}2.eu",
+   "${servers}1.eu",
+   "${servers}3.eu",
+   "${servers}4.eu",
+   "${servers}4.na",
+   "${servers}3.na",
+   "${servers}2.na",
+   "${servers}1.na"
   ],
   "stakeaddr": "$stakeaddr",
   "email": "$email",
@@ -158,9 +168,6 @@ cat << EOF > /mnt/zen/secnode/config.json
  }
 }
 EOF
-# https://github.com/WhenLamboMoon/docker-zen-node/issues/88
-mkdir /mnt/zen/secnode/local
-chmod -R 777 /mnt/zen/secnode/
 
 print_status "Installing zend service..."
 cat <<EOF > /etc/systemd/system/zen-node.service
@@ -176,7 +183,7 @@ ExecStartPre=-/usr/bin/docker stop zen-node
 ExecStartPre=-/usr/bin/docker rm  zen-node
 # Always pull the latest docker image
 ExecStartPre=/usr/bin/docker pull whenlambomoon/zend:latest
-ExecStart=/usr/bin/docker run --rm --net=host -p 9033:9033 -p 18231:18231 -v /mnt/zen:/mnt/zen --name zen-node whenlambomoon/zend:latest
+ExecStart=/usr/bin/docker run --rm --net=host -p 9033:9033 -p 18231:18231 -v /mnt/zen:/mnt/zen -v /etc/letsencrypt/:/etc/letsencrypt/ --name zen-node whenlambomoon/zend:latest
 [Install]
 WantedBy=multi-user.target
 EOF

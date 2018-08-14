@@ -7,9 +7,8 @@ containers:
 
 - zend https://hub.docker.com/r/whenlambomoon/zend/
 - Securenodetracker https://hub.docker.com/r/whenlambomoon/secnodetracker/
-- neilpang/acme.sh https://hub.docker.com/r/neilpang/acme.sh
 
-acme.sh will run as a docker container and auto-renew your SSL certificates when required.
+Certbot will be installed and auto-renew your SSL certificates when required.
 
 ## Requirements
 
@@ -18,7 +17,7 @@ You will need a server with at least 4GB ram (2GB memory w/ 2GB swap is generall
 The script is designed to run on Ubuntu 16.04
 
 You will also need a domain name that is pointing to your server (eg. zennode.example.com)
-acme.sh will be used to provision and maintain a valid SSL certificate for your domain.
+certbot will be used to provision and maintain a valid SSL certificate for your domain.
 
 ## Installation
 

@@ -51,17 +51,23 @@ else
 fi
 
 # Copy in any additional SSL trusted CA
-if [ -d "/mnt/zen/certs" ]; then
-  active=$(cat /mnt/zen/secnode/config.json | jq -r '.active')
-  if [ $active == "secure" ]; then
-    domain=$(cat /mnt/zen/secnode/config.json | jq -r '.secure.fqdn')
-  else
-    domain=$(cat /mnt/zen/secnode/config.json | jq -r '.super.fqdn')
-  fi
+active=$(cat /mnt/zen/secnode/config.json | jq -r '.active')
+if [ $active == "secure" ]; then
+  domain=$(cat /mnt/zen/secnode/config.json | jq -r '.secure.fqdn')
+else
+  domain=$(cat /mnt/zen/secnode/config.json | jq -r '.super.fqdn')
+fi
 
+if [ -d "/mnt/zen/certs" ]; then
   if [ -f /mnt/zen/certs/$domain/ca.cer ]; then
     echo "Copying additional trusted SSL certificates"
     cp /mnt/zen/certs/$domain/ca.cer /usr/local/share/ca-certificates/ca.crt > /dev/null 2>&1 || true
+    update-ca-certificates --fresh
+  fi
+else
+  if [ -f /etc/letsencrypt/live/$domain/chain.pem ]; then
+    echo "Copying additional trusted SSL certificates"
+    cp /etc/letsencrypt/live/$domain/chain.pem /usr/local/share/ca-certificates/ca.crt > /dev/null 2>&1 || true
     update-ca-certificates --fresh
   fi
 fi

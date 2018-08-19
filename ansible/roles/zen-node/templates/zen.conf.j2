@@ -10,8 +10,8 @@ logtimestamps=1
 testnet=0
 rpcuser=user
 rpcpassword={{ rpcpassword.stdout }}
-tlscertpath=/mnt/zen/certs/{{ fqdn }}/{{ fqdn }}.cer
-tlskeypath=/mnt/zen/certs/{{ fqdn }}/{{ fqdn }}.key
+tlscertpath=/etc/letsencrypt/live/{{ fqdn }}/cert.pem
+tlskeypath=/etc/letsencrypt/live/{{ fqdn }}/privkey.pem
 
 # Add our nodes
 {% for host in groups['zen-nodes'] %}

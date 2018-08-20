@@ -36,6 +36,11 @@
   apt:
     upgrade: dist
 
+- name: Add Certbot PPA
+  apt_repository:
+    repo: ppa:certbot/certbot
+    state: present
+    update_cache: yes
 
 - name: Install required packages
   apt:
@@ -49,6 +54,7 @@
     - fail2ban
     - unattended-upgrades
     - ufw
+    - certbot
   register: install_packages
 
 
@@ -71,41 +77,34 @@
     - /mnt/zen/zcash-params
     - /mnt/zen/certs
 
-- name: Installing acme container service
-  template: src=acme-sh.service dest=/etc/systemd/system/acme-sh.service
-  register: write_acme_systemd
+- name: Remove acme-sh from systemd
+  file:
+    path: "/etc/systemd/system/acme-sh.service"
+    state: absent
+  register: acme
 
-
-- name: reload systemd for acme-sh
-  command: systemctl daemon-reload
-  when: write_acme_systemd.changed
-
-
-- name: Restart acme-sh
+- name: Disable acme-sh
   service:
     name: acme-sh
-    state: restarted
-    enabled: yes
-  when: write_acme_systemd.changed
+    state: stopped
+    enabled: no
+  when: acme.changed
 
+- name: "Check if certificate for {{ fqdn }} exists"
+  stat:
+    path: "/etc/letsencrypt/live/{{ fqdn }}/cert.pem"
+  register: letsencrypt_cert
 
-- name: Waiting for acme-sh to come up
-  command: docker exec acme-sh --list
-  register: wait_result
-  until: wait_result.stdout != ""
-  retries: 10
-  delay: 5
+- name: Generate new certificate if one doesn't exist.
+  shell: "certbot certonly --standalone --noninteractive --agree-tos --email {{ cert_email }} -d {{ cert_domain }}"
+  when: not letsencrypt_cert.stat.exists
 
-
-- debug:
-    msg: "{{ wait_result.stdout }}"
-
-
-- name: "Issuing cert for {{ fqdn }}..."
-  command: "docker exec acme-sh --issue -d {{ fqdn }} --standalone"
-  register: cer_result
-  failed_when: cer_result.rc == 1
-
+- name: Open permissions on cert directory
+  file:
+    path: "/etc/letsencrypt/"
+    state: directory
+    mode: 0755
+    recurse: yes
 
 - name: Creating the secnode config...
   file:
@@ -125,27 +124,48 @@
   register: rpcpassword
 
 - name: Installing zen-node service
-  template: src=zen-node.service dest=/etc/systemd/system/zen-node.service
+  template:
+    src: zen-node.service
+    dest: "/etc/systemd/system/zen-node.service"
   register: write_zen_node
 
 - name: Installing zen-secnodetracker service
-  template: src=zen-secnodetracker.service dest=/etc/systemd/system/zen-secnodetracker.service
-  register: write_zen_node
+  template:
+    src: zen-secnodetracker.service
+    dest: "/etc/systemd/system/zen-secnodetracker.service"
+  register: write_zen_node_tracker
+
+- name: Install zenupdate service
+  template:
+    src: zenupdate.service
+    dest: "/lib/systemd/system/zenupdate.service"
+  register: write_zen_updater
+
+- name: Install zenupdate cron service
+  template:
+    src: zenupdate.timer
+    dest: "/lib/systemd/system/zenupdate.timer"
+  register: write_zen_timer
 
 - name: reload systemd for zen containers
-  command: systemctl daemon-reload
-  when: write_zen_node.changed
+  systemd: 
+    daemon_reload: yes
+  when: write_zen_node.changed or write_zen_node_tracker.changed or write_zen_updater.changed or write_zen_timer.changed 
 
 - name: Set the servers env
-    set_fact:
-      servers: "{% if nodetype=='super' %}xns{% else %}ts{% endif %}"
+  set_fact:
+    servers: "{% if nodetype=='super' %}xns{% else %}ts{% endif %}"
 
 - name: Creating the zen secnode configuration
-  template: src=config.json.j2 dest=/mnt/zen/secnode/config.json
+  template:
+    src: config.json.j2
+    dest: "/mnt/zen/secnode/config.json"
   notify: restart_zen-secnodetracker
 
 - name: Creating the zen configuration
-  template: src=zen.conf.j2 dest=/mnt/zen/config/zen.conf
+  template:
+    src: zen.conf.j2
+    dest: "/mnt/zen/config/zen.conf"
   notify: restart_zen-node
 
 - name: Enabling and starting zen-node container services...
@@ -157,6 +177,24 @@
 - name: Enabling and starting zen-secnodetracker container services...
   service:
     name: zen-secnodetracker
+    state: started
+    enabled: yes
+
+- name: Disabling existing certbot timer...
+  systemd:
+    name: certbot.timer
+    state: stopped
+    enabled: no
+
+- name: Enabling and starting the zenupdate service...
+  service:
+    name: zenupdate
+    state: started
+    enabled: yes
+
+- name: Enabling and starting the zenupdate timer...
+  systemd:
+    name: zenupdate.timer
     state: started
     enabled: yes
 

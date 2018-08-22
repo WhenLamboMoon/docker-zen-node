@@ -15,7 +15,7 @@ cp -r /mnt/zen/zcash-params /mnt/zcash-params
 # Fix the permissons
 chown -R node:node /mnt/zen/secnode /mnt/zcash-params /home/node/secnodetracker
 chmod g+rw /mnt/zen/secnode /home/node/secnodetracker
-chmod 777 /home/node/secnodetracker/config
+chmod -R 777 /home/node/secnodetracker/config
 
 cd /home/node/secnodetracker
 gosu node node app.js

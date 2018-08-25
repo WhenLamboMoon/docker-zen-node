@@ -58,13 +58,13 @@ else
   domain=$(cat /mnt/zen/secnode/config.json | jq -r '.super.fqdn')
 fi
 
-if [ -f /mnt/zen/certs/$domain/ca.cer ]; then
-  echo "Copying additional trusted SSL certificates"
-  cp /mnt/zen/certs/$domain/ca.cer /usr/local/share/ca-certificates/ca.crt > /dev/null 2>&1 || true
-  update-ca-certificates --fresh
-elif [ -f /etc/letsencrypt/live/$domain/chain.pem ]; then
+if [ -f /etc/letsencrypt/live/$domain/chain.pem ]; then
   echo "Copying additional trusted SSL certificates"
   cp /etc/letsencrypt/live/$domain/chain.pem /usr/local/share/ca-certificates/ca.crt > /dev/null 2>&1 || true
+  update-ca-certificates --fresh
+elif [ -f /mnt/zen/certs/$domain/ca.cer ]; then
+  echo "Copying additional trusted SSL certificates"
+  cp /mnt/zen/certs/$domain/ca.cer /usr/local/share/ca-certificates/ca.crt > /dev/null 2>&1 || true
   update-ca-certificates --fresh
 fi
 

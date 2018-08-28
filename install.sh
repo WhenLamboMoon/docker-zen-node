@@ -68,6 +68,10 @@ mkdir -p /mnt/zen/{config,data,zcash-params,certs}
 print_status "Removing acme container service..."
 rm /etc/systemd/system/acme-sh.service
 
+print_status "Disable apache2 if enabled, to free Port 80..."
+systemctl disable apache2
+systemctl stop apache2
+
 print_status "Installing certbot..."
 add-apt-repository ppa:certbot/certbot -y
 apt-get update -y

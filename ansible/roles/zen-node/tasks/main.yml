@@ -156,6 +156,10 @@
   set_fact:
     servers: "{% if nodetype=='super' %}xns{% else %}ts{% endif %}"
 
+- name: Set server public IP addresses
+  set_fact:
+    externalIP_list: "$(dig $fqdn A $fqdn AAAA +short) "
+
 - name: Creating the zen secnode configuration
   template:
     src: config.json.j2

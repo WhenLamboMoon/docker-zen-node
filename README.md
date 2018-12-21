@@ -12,7 +12,7 @@ Certbot will be installed and auto-renew your SSL certificates when required.
 
 ## Requirements
 
-You will need a server with at least 4GB ram (2GB memory w/ 2GB swap is generally OK) to run a ZenCash secure node. Common providers can be found here: https://zencash.atlassian.net/wiki/spaces/ZEN/pages/7537074/Community+VPS+List
+You will need a server with at least 4GB ram (2GB memory w/ 2GB swap is generally OK) to run a ZenCash secure node. Common providers can be found here: https://horizenofficial.atlassian.net/wiki/spaces/ZEN/pages/136872080/Community+VPS+List
 
 The script is designed to run on Ubuntu 16.04
 

@@ -158,7 +158,7 @@ To resolve this you will need to reindex your zen-node. To do this you will need
 
 ```
 systemctl stop zen-node
-docker run --rm --net=host -p 9033:9033 -p 18231:18231 -v /mnt/zen:/mnt/zen --name zen-node whenlambomoon/zend:latest zend -reindex
+docker run --rm --net=host -p 9033:9033 -p 18231:18231 -v /mnt/zen:/mnt/zen -v /etc/letsencrypt/:/etc/letsencrypt --name zen-node whenlambomoon/zend:latest zend -reindex
 ```
 
 Once it finishes reindexing you can exit and restart the zen-node normally:

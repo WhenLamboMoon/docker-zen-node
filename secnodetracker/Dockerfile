@@ -11,7 +11,7 @@ RUN latestBaseurl="$(curl -s https://api.github.com/repos/tianon/gosu/releases |
 && curl -o /usr/local/bin/gosu -SL "$latestBaseurl/gosu-$dpkgArch" \
 && curl -o /usr/local/bin/gosu.asc -SL "$latestBaseurl/gosu-$dpkgArch.asc" \
 && export GNUPGHOME="$(mktemp -d)" \
-&& mkdir ~/.gnupg \
+&& mkdir -p ~/.gnupg \
 && echo "disable-ipv6" >> ~/.gnupg/dirmngr.conf \
 && gpg --no-tty --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
 && gpg --no-tty --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \

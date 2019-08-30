@@ -1,5 +1,7 @@
 # Docker Zencash Secure Node
 
+**UNFORTUNATELY I AM NO LONGER ABLE TO MAINTAIN THIS DUE TO OTHER COMMITMENTS. PLEASE OPEN AN ISSUE IF YOU ARE INTERESTED IN TAKING OVER**
+
 This repository will help you setup a zencash node with a single bash script.
 
 The script will install Docker on a fresh Ubuntu VM and provision the following

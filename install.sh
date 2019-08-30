@@ -167,7 +167,7 @@ cat << EOF > /mnt/zen/secnode/config.json
   "fqdn": "$fqdn",
   "ipv": "4",
   "region": "$region",
-  "home": "ts1.$region",
+  "home": "${servers}1.$region",
   "category": "none"
  }
 }

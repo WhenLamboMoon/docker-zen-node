@@ -1,5 +1,8 @@
 FROM ubuntu:16.04
 
+# Used only for triggering a rebuild
+LABEL zend="2.0.19"
+
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install ca-certificates curl wget apt-transport-https lsb-release libgomp1 jq \
     && echo 'deb https://zencashofficial.github.io/repo/ '$(lsb_release -cs)' main' | tee --append /etc/apt/sources.list.d/zen.list \
